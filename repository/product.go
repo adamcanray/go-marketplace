@@ -3,23 +3,11 @@ package repository
 import (
 	"fmt"
 	"go-marketplace/entity"
+	"go-marketplace/model"
 	"go-marketplace/provider"
 	"log"
 	"math"
 )
-
-type ListProductData struct {
-	Products []entity.Product `json:"products"`
-}
-type ListProductMeta struct {
-	Page       int `json:"page"`
-	MaxPage    int `json:"max_page"`
-	RowPerPage int `json:"content_per_page"`
-}
-type ListProduct struct {
-	Data ListProductData `json:"data"`
-	Meta ListProductMeta `json:"meta"`
-}
 
 func ProductAddRepository(name string, price int, stock int) error {
 	db := provider.MysqlProvider()
@@ -38,7 +26,7 @@ func ProductAddRepository(name string, price int, stock int) error {
 	return err
 }
 
-func ProductGetListRepository(order_by string, order string, page int, content_per_page int) ListProduct {
+func ProductGetListRepository(order_by string, order string, page int, content_per_page int) model.ListProduct {
 	db := provider.MysqlProvider()
 	defer db.Close()
 
@@ -71,10 +59,9 @@ func ProductGetListRepository(order_by string, order string, page int, content_p
 		log.Fatalln("[responsitoy.ProductGetLastID-db.Query#count-rows]", err.Error())
 	}
 
-	// total rows / content_per_page = pages (pembulatan keatas, jika hasil membagian adalah2.0001 maka akan menjadi 3)
 	pages := math.Ceil(float64(countRows) / float64(content_per_page))
 
-	var list ListProduct
+	var list model.ListProduct
 	var products []entity.Product
 
 	for result.Next() {
@@ -89,8 +76,9 @@ func ProductGetListRepository(order_by string, order string, page int, content_p
 
 	list.Data.Products = products
 	list.Meta.Page = page + 1
-	list.Meta.RowPerPage = content_per_page
+	list.Meta.ContentPerPage = content_per_page
 	list.Meta.MaxPage = int(pages)
+	list.Meta.Total = countRows
 
 	return list
 }
