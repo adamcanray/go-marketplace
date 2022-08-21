@@ -5,7 +5,21 @@ import (
 	"go-marketplace/entity"
 	"go-marketplace/provider"
 	"log"
+	"math"
 )
+
+type ListProductData struct {
+	Products []entity.Product `json:"products"`
+}
+type ListProductMeta struct {
+	Page       int `json:"page"`
+	MaxPage    int `json:"max_page"`
+	RowPerPage int `json:"content_per_page"`
+}
+type ListProduct struct {
+	Data ListProductData `json:"data"`
+	Meta ListProductMeta `json:"meta"`
+}
 
 func ProductAddRepository(name string, price int, stock int) error {
 	db := provider.MysqlProvider()
@@ -24,16 +38,44 @@ func ProductAddRepository(name string, price int, stock int) error {
 	return err
 }
 
-func ProductGetListRepository() []entity.Product {
+func ProductGetListRepository(order_by string, order string, page int, content_per_page int) ListProduct {
 	db := provider.MysqlProvider()
 	defer db.Close()
 
-	result, err := db.Query("SELECT id, name, price, stock, created_at, updated_at FROM product")
-	if err != nil {
-		log.Fatalln("[responsitoy.ProductGetLastID-db.Query]", err.Error())
+	// set default value
+	if order_by == "" {
+		order_by = "id"
+	}
+	if order == "" {
+		order = "ASC"
+	}
+	if page == 0 {
+		page = 1
+	}
+	if content_per_page == 0 {
+		content_per_page = 5
 	}
 
-	var list []entity.Product
+	page = page - 1
+
+	offset := content_per_page * page
+
+	result, err := db.Query(fmt.Sprintf("SELECT id, name, price, stock, created_at, updated_at FROM product ORDER BY %s %s LIMIT %d,%d", order_by, order, offset, content_per_page))
+	if err != nil {
+		log.Fatalln("[responsitoy.ProductGetLastID-db.Query#list]", err.Error())
+	}
+
+	var countRows int
+	err = db.QueryRow("SELECT COUNT(*) FROM product").Scan(&countRows)
+	if err != nil {
+		log.Fatalln("[responsitoy.ProductGetLastID-db.Query#count-rows]", err.Error())
+	}
+
+	// total rows / content_per_page = pages (pembulatan keatas, jika hasil membagian adalah2.0001 maka akan menjadi 3)
+	pages := math.Ceil(float64(countRows) / float64(content_per_page))
+
+	var list ListProduct
+	var products []entity.Product
 
 	for result.Next() {
 		var product entity.Product
@@ -41,9 +83,14 @@ func ProductGetListRepository() []entity.Product {
 		if err != nil {
 			panic(err.Error())
 		}
-		list = append(list, product)
+		products = append(products, product)
 	}
 	defer result.Close()
+
+	list.Data.Products = products
+	list.Meta.Page = page + 1
+	list.Meta.RowPerPage = content_per_page
+	list.Meta.MaxPage = int(pages)
 
 	return list
 }

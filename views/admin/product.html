@@ -5,6 +5,7 @@
       Add New Product
     </a>
   </div>
+  {{ .Meta.Page}} {{ .Meta.MaxPage}} {{ .Meta.RowPerPage}}
   <table class="table table-sm mt-4">
     <thead>
       <tr>
@@ -16,7 +17,7 @@
         <th scope="col">Updated At</th>
         <th scope="col">Action</th>
       </tr>
-      {{ range .}}
+      {{ range .Data.Products}}
       <tr>
         <th scope="row">{{ .ID }}</th>
         <td>{{ .Name }}</td>
@@ -52,5 +53,10 @@
       {{ end }}
     </thead>
   </table>
+  <!-- <div>
+    {{ range .Data.Products}}
+    <a></a>
+    {{end}}
+  </div> -->
 </div>
 {{ end }}

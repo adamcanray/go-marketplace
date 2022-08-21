@@ -76,7 +76,14 @@ func ProductAddProcessHandler(w http.ResponseWriter, r *http.Request) {
 func ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		id := r.URL.Query().Get("id")
+		page := r.URL.Query().Get("page")
+		contentPerPage := r.URL.Query().Get("content_per_page")
+		orderBy := r.URL.Query().Get("order_by")
+		order := r.URL.Query().Get("order")
+
 		idNumb, err := strconv.Atoi(id)
+		pageNumb, err := strconv.Atoi(page)
+		contentPerPageNumb, err := strconv.Atoi(contentPerPage)
 
 		if err != nil || idNumb < 1 {
 			tmpl, err := template.ParseFiles(path.Join("views/admin", "product.html"), path.Join("views/admin", "layout.html"))
@@ -86,8 +93,7 @@ func ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			data := repository.ProductGetListRepository()
-
+			data := repository.ProductGetListRepository(orderBy, order, pageNumb, contentPerPageNumb)
 			err = tmpl.Execute(w, data)
 			if err != nil {
 				log.Println("[handler.ProductGetHandler-tmpl.Execute#list]", err)
