@@ -5,7 +5,7 @@ FROM plugins/base:linux-amd64
   org.label-schema.vendor="Sailor1921" \
   org.label-schema.schema-version="1.0.1"
 
-  EXPOSE 8080
+  EXPOSE 8090
 
   COPY release/go-marketplace /bin/
 
