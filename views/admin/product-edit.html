@@ -1,0 +1,54 @@
+{{ template "layout" .}} {{ define "main" }}
+<div class="container">
+  <a type="button" class="btn btn-primary btn-sm" href="/admin/product">
+    Back to List Product
+  </a>
+  <div class="card mt-4" style="width: 24rem">
+    <div class="card-body">
+      <h5 class="card-title">Add New Product</h5>
+      <h6 class="card-subtitle mb-2 text-muted">
+        Fill this form and submit to add new product to database
+      </h6>
+      <form action="/admin/product/edit/process" method="post">
+        <input type="hidden" name="id" value="{{ .ID }}" />
+        <div class="mb-3">
+          <label for="name" class="form-label"> Name </label>
+          <input
+            type="text"
+            name="name"
+            class="form-control"
+            id="name"
+            aria-describedby="nameHelp"
+            value="{{ .Name }}"
+            required
+          />
+          <div id="nameHelp" class="form-text">Name of product.</div>
+        </div>
+        <div class="mb-3">
+          <label for="price" class="form-label">Price</label>
+          <input
+            type="number"
+            name="price"
+            class="form-control"
+            id="price"
+            value="{{ .Price }}"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="stock" class="form-label">Stock</label>
+          <input
+            type="number"
+            name="stock"
+            class="form-control"
+            id="stock"
+            value="{{ .Stock }}"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-success">Add</button>
+      </form>
+    </div>
+  </div>
+</div>
+{{ end }}

@@ -1,0 +1,56 @@
+{{ template "layout" .}} {{ define "main" }}
+<div class="container">
+  <div class="d-flex justify-content-end">
+    <a type="button" class="btn btn-primary btn-sm" href="/admin/product/add">
+      Add New Product
+    </a>
+  </div>
+  <table class="table table-sm mt-4">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Stock</th>
+        <th scope="col">Created At</th>
+        <th scope="col">Updated At</th>
+        <th scope="col">Action</th>
+      </tr>
+      {{ range .}}
+      <tr>
+        <th scope="row">{{ .ID }}</th>
+        <td>{{ .Name }}</td>
+        <td class="format-to-rupiah">{{ .Price }}</td>
+        <td>{{ .Stock }}</td>
+        <td>{{ .CreatedAt }}</td>
+        <td>{{ .UpdatedAt }}</td>
+        <td>
+          <a
+            class="badge bg-info text-dark"
+            style="cursor: pointer"
+            href="/admin/product?id={{ .ID }}"
+          >
+            detail
+          </a>
+          <a
+            class="badge bg-warning text-dark"
+            style="cursor: pointer"
+            href="/admin/product/edit?id={{ .ID }}"
+          >
+            edit
+          </a>
+          <a
+            class="badge bg-danger text-white"
+            style="cursor: pointer"
+            href="/admin/product/delete/process?id={{ .ID }}"
+            onclick="return confirm('Are you sure want delete product with id {{ .ID }}?')"
+          >
+            delete
+          </a>
+        </td>
+      </tr>
+      {{ end }}
+    </thead>
+  </table>
+</div>
+{{ end }}
