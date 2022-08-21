@@ -82,8 +82,6 @@ func ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 		order := r.URL.Query().Get("order")
 
 		idNumb, err := strconv.Atoi(id)
-		pageNumb, err := strconv.Atoi(page)
-		contentPerPageNumb, err := strconv.Atoi(contentPerPage)
 
 		if err != nil || idNumb < 1 {
 			tmpl, err := template.ParseFiles(path.Join("views/admin", "product.html"), path.Join("views/admin", "layout.html"))
@@ -92,6 +90,9 @@ func ProductGetHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Error is happening, keep calm.", http.StatusInternalServerError)
 				return
 			}
+
+			pageNumb, err := strconv.Atoi(page)
+			contentPerPageNumb, err := strconv.Atoi(contentPerPage)
 
 			data := repository.ProductGetListRepository(orderBy, order, pageNumb, contentPerPageNumb)
 			err = tmpl.Execute(w, data)
