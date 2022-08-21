@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  go-marketplace:
+    image: sailor1921/go-marketplace
+    restart: always
+    ports:
+      - 8000:8090
