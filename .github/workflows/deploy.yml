@@ -1,0 +1,35 @@
+name: Build and Test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: Tesing
+        run: |
+          make test
+
+      - name: Build binary
+        run: |
+          make build
+
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: sailor1921/go-marketplace
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
