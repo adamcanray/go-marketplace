@@ -28,11 +28,7 @@ jobs:
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
       - name: Check output
-        env:
-          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
-        run: |
-          echo $RELEASE_VERSION
-          echo ${{ steps.vars.outputs.tag }}
+        run: echo ${{ steps.vars.outputs.tag }}
 
       - name: Fetch required Go modules
         run: go mod download
@@ -43,9 +39,12 @@ jobs:
       - name: Build and push Docker image
         id: docker_build
         uses: docker/build-push-action@v2
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: echo "release version $RELEASE_VERSION"
         with:
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ env.RELEASE_VERSION }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:$RELEASE_VERSION
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
