@@ -15,18 +15,11 @@
 
 # syntax=docker/dockerfile:1
 
-FROM golang:1.18.2
+FROM golang:1.18.2-alpine
 
 WORKDIR /app
 
-# install all dependencies
-RUN go get ./...
-
-COPY go.mod ./
-COPY go.sum ./
-RUN go mod download
-
-COPY *.go ./
+ADD . /app
 
 RUN go build -o /go-marketplace
 
