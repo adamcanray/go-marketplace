@@ -4,9 +4,16 @@ import (
 	"go-marketplace/handler"
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/admin/product", handler.ProductGetHandler)
 	mux.HandleFunc("/admin/product/add", handler.ProductAddHandler)
@@ -20,6 +27,6 @@ func main() {
 
 	log.Println("Starting web on port 8090")
 
-	err := http.ListenAndServe(":8090", mux)
+	err = http.ListenAndServe(":8090", mux)
 	log.Fatal(err)
 }
