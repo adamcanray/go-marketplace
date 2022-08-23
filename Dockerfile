@@ -19,6 +19,9 @@ FROM golang:1.18.2
 
 WORKDIR /app
 
+# install all dependencies
+RUN go get ./...
+
 COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
