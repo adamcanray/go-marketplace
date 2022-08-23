@@ -13,7 +13,6 @@ func MysqlProvider() *sql.DB {
 	// References:
 	// - ?parseTime=true -- https://stackoverflow.com/a/45040724/11587161
 	// - docker.for.mac.localhost -- https://stackoverflow.com/a/52504428/11587161
-	// db, err := sql.Open("mysql", "root:root@tcp(docker.for.mac.localhost:3306)/go-mysql?parseTime=true")
 	db, err := sql.Open(
 		"mysql",
 		fmt.Sprintf(
