@@ -3,7 +3,5 @@ services:
   go-marketplace:
     image: sailor1921/go-marketplace
     restart: always
-    environment:
-      - MODE=development
     ports:
       - 8000:8090
